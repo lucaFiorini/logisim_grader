@@ -1,6 +1,17 @@
 from logisim_types import Coord,Direction,Wire,Output
 import xml.etree.ElementTree as ET
+from importlib.resources import files
 
+def get_tester_circuit() -> ET.ElementTree[ET.Element[str]]:
+  """Get the tester file that is to be used with the package
+
+  Returns:
+      ET.ElementTree[ET.Element[str]]: The elementree for the tester circuit
+  """
+  resource = files(__package__).joinpath('circuits').joinpath("tester.circ")
+  with resource.open("rb") as f:
+    return ET.parse(f)
+      
 def get_num_inputs_outputs(circ : ET.ElementTree) -> tuple[int,int]:
   root = circ.getroot()
   assert root is not None
