@@ -85,7 +85,7 @@ class Test[TestCallable: Callable[...,bool]]:
     for input_set in res.splitlines():
       values = input_set.split('\t')    
       inputs = [v == '1' for v in values[0:CIRC_NUM_INPUTS]]
-      if len(values) < CIRC_NUM_INPUTS+output_index:
+      if CIRC_NUM_INPUTS+output_index >= len(values):
         return TestResult.StructureFail("Output per questo test non trovato")
        
       output = values[CIRC_NUM_INPUTS+output_index]
