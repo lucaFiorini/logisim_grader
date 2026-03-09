@@ -104,7 +104,7 @@ res = {}
 res["fraction"] = 0
 res["got"] = ""
 
-test_funcs : list[Callable[...,bool]] = {{TEST.testcode}}
+test_funcs : list[Callable[...,bool]] = ({{TEST.testcode}})
 tests : list[Test] = []
 for test in test_funcs:
   tests.append(Test(test))
