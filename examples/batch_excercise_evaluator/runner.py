@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import Callable
 from inspect import signature
-from ...circuit_generator import get_num_inputs_outputs,create_connected_tester_circuit,CIRC_TO_REPLACE
+from logisim_grader.circuit_generator import get_num_inputs_outputs,create_connected_tester_circuit,CIRC_TO_REPLACE
 
 @dataclass
 class TestResult:
