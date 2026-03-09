@@ -58,21 +58,10 @@ class Test[TestCallable: Callable[...,bool]]:
         
     return TestResult.Success()
 
-PREFS_DIR = "/tmp/java-prefs"
-os.makedirs(PREFS_DIR, exist_ok=True)
-
-### Silencing Java errors
-with open("logging.properties", "w") as f:
-    f.write("java.util.prefs.level = WARNING\n")
-JAVA_FLAGS = [
-    f"-Djava.util.prefs.userRoot={PREFS_DIR}",
-    f"-Djava.util.prefs.systemRoot={PREFS_DIR}",
-    "-Djava.util.logging.config.file=logging.properties",
-    "-Djava.awt.headless=true"
-]
+JAVA_FLAGS = []
 
 
-LOGISIM_COMMAND = ['java']+JAVA_FLAGS+['-jar','/usr/bin/logisim'] 
+LOGISIM_COMMAND = ['java']+JAVA_FLAGS+['-jar','logisim-generic-2.7.1.jar'] 
 
 submission = './secret.files/Alessandro Broglio_44406_assignsubmission_file_Broglio_Alessandro.circ'
 
@@ -83,14 +72,17 @@ CONNECTED_TESTER_NAME = '__TESTER_FILE.circ'
 
 tester_data.write(CONNECTED_TESTER_NAME)
 
-logisim_output = subprocess.check_output(
-    LOGISIM_COMMAND +[
-      CONNECTED_TESTER_NAME,
-      '-tty','table',
-      '-sub',CIRC_TO_REPLACE,submission
-    ]
-  ).decode('utf-8')
-
+try:
+  logisim_output = subprocess.check_output(
+      LOGISIM_COMMAND +[
+        CONNECTED_TESTER_NAME,
+        '-tty','table',
+        '-sub',CIRC_TO_REPLACE,submission
+      ]
+    ).decode('utf-8')
+except:
+  print("TODO fix this")
+  
 # Now that we have the output, let's actually check if it's right
 
 res = {}
@@ -141,4 +133,6 @@ for test_index,test in enumerate(tests):
 
       
 
+print(res["got"])
+print()
 print(json.JSONEncoder().encode(res))
