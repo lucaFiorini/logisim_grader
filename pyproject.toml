@@ -1,0 +1,2 @@
+[tool.setuptools.package-data]
+your_package_name = ["circuits/*.circ"]

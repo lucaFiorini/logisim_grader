@@ -1,18 +1,18 @@
 from logisim_types import Coord,Direction,Wire,Output
 import xml.etree.ElementTree as ET
-from importlib.resources import files
+from importlib.resources import files,as_file
 
-def get_tester_circuit() -> ET.ElementTree[ET.Element[str]]:
-  """Get the tester file that is to be used with the package
+#The filename of the placeholder circuit to be replaced in the tester project
+CIRC_TO_REPLACE = 'placeholder.circ'
+  
+def get_tester_circuit_resource():
+  return as_file(files(__package__).joinpath("circuits/tester.circ"))
 
-  Returns:
-      ET.ElementTree[ET.Element[str]]: The elementree for the tester circuit
-  """
-  resource = files(__package__).joinpath('circuits').joinpath("tester.circ")
-  with resource.open("rb") as f:
-    return ET.parse(f)
-      
-def get_num_inputs_outputs(circ : ET.ElementTree) -> tuple[int,int]:
+def get_tester_circuit_parsed():
+  with get_tester_circuit_resource() as res:
+    return ET.parse(res)
+
+def get_num_inputs_outputs(circ : ET.ElementTree[ET.Element[str]]) -> tuple[int,int]:
   root = circ.getroot()
   assert root is not None
   
@@ -36,9 +36,10 @@ def get_num_inputs_outputs(circ : ET.ElementTree) -> tuple[int,int]:
   )
   return (n_inputs,n_outputs)
   
-def connect_test_circuit(master_circuit : ET.ElementTree, evaluated_circuit : ET.ElementTree):
-
-  root = master_circuit.getroot()
+def create_connected_tester_circuit(evaluated_circuit : ET.ElementTree[ET.Element[str]]) -> ET.ElementTree[ET.Element[str]]:
+  
+  tester_circuit = get_tester_circuit_parsed()
+  root = tester_circuit.getroot()
   assert root is not None
   
   #Get Number of Inputs
@@ -138,8 +139,6 @@ def connect_test_circuit(master_circuit : ET.ElementTree, evaluated_circuit : ET
     outputs.append(Output(wire.get_end()))
   
   #Now that I have organized all of the extra elements, I will start adding them to the circuit.
-  root = master_circuit.getroot()
-  assert root != None
   
   main_circ_elem = next(
     c for c in root.findall("circuit") if c.get("name") == "main"
@@ -181,3 +180,5 @@ def connect_test_circuit(master_circuit : ET.ElementTree, evaluated_circuit : ET
 
   for output in outputs:
     add_output_pin(main_circ_elem, output.origin)
+    
+  return tester_circuit
