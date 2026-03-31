@@ -1,4 +1,4 @@
-from logisim_types import Coord,Direction,Wire,Output
+from .logisim_types import Coord,Direction,Wire,Output
 import xml.etree.ElementTree as ET
 from importlib.resources import files,as_file
 
