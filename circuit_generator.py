@@ -1,10 +1,11 @@
 from __future__ import annotations
+from pathlib import Path
 from .logisim_types import Coord,Direction,Wire,Output
 import xml.etree.ElementTree as ET
 from importlib.resources import files,as_file
 
 #The filename of the placeholder circuit to be replaced in the tester project
-CIRC_TO_REPLACE = 'placeholder.circ'
+CIRC_TO_REPLACE = Path(str(__path__),'placeholder.circ')
   
 def get_tester_circuit_resource():
   return as_file(files(__package__).joinpath("circuits/tester.circ"))
