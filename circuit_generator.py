@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from importlib.resources import files,as_file
 
 #The filename of the placeholder circuit to be replaced in the tester project
-CIRC_TO_REPLACE = str(Path(os.path.dirname(os.path.abspath(__file__)),'placeholder.circ'))
+CIRC_TO_REPLACE = 'placeholder.circ'
   
 def get_tester_circuit_resource():
   return as_file(files(__package__).joinpath("circuits/tester.circ"))
