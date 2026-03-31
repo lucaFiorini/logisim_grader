@@ -13,7 +13,7 @@ def get_tester_circuit_parsed():
   with get_tester_circuit_resource() as res:
     return ET.parse(res)
 
-def get_num_inputs_outputs(circ : ET.ElementTree[ET.Element[str]]) -> tuple[int,int]:
+def get_num_inputs_outputs(circ : 'ET.ElementTree[ET.Element[str]]') -> tuple[int,int]:
   root = circ.getroot()
   assert root is not None
   
@@ -37,7 +37,7 @@ def get_num_inputs_outputs(circ : ET.ElementTree[ET.Element[str]]) -> tuple[int,
   )
   return (n_inputs,n_outputs)
   
-def create_connected_tester_circuit(evaluated_circuit : ET.ElementTree[ET.Element[str]]) -> ET.ElementTree[ET.Element[str]]:
+def create_connected_tester_circuit(evaluated_circuit : 'ET.ElementTree[ET.Element[str]]') -> 'ET.ElementTree[ET.Element[str]]':
   
   tester_circuit = get_tester_circuit_parsed()
   root = tester_circuit.getroot()
