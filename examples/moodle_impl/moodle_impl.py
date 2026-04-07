@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import Callable
 from inspect import signature
-from circuit_generator import get_tester_circuit_resource,get_num_inputs_outputs,create_connected_tester_circuit,CIRC_TO_REPLACE
+from logisim_grader.circuit_generator import get_tester_circuit_resource,get_num_inputs_outputs,create_connected_tester_circuit,CIRC_TO_REPLACE
 
 PREFS_DIR = "/tmp/java-prefs"
 os.makedirs(PREFS_DIR, exist_ok=True)
@@ -39,6 +39,7 @@ tester_data = create_connected_tester_circuit(parsed_submission)
 CONNECTED_TESTER_NAME = '__TESTER_FILE.circ'
 
 tester_data.write(CONNECTED_TESTER_NAME)
+tester_data.write('placeholder.circ')
 
 logisim_output = subprocess.check_output(
     LOGISIM_COMMAND+[
@@ -105,41 +106,38 @@ res = {}
 res["fraction"] = 0
 res["got"] = ""
 
-test_funcs : list[Callable[...,bool]] = ({{TEST.testcode}})
+# Used Subcircuits
+{{QUESTION.globalextra}}
+
+test_funcs : list[Callable[...,bool]] = ([{{TEST.testcode}}])
 tests : list[Test] = []
 for test in test_funcs:
   tests.append(Test(test))
 
 for test_index,test in enumerate(tests):
-  res["got"]+="----------------------------\n"
   res["got"]+=f"Test #{test_index+1}"
   
   num_tests = len(tests)
   result = test.run(logisim_output,test_index)
   
   match result:
-    case TestResult.Success() : res["fraction"] += 1 / num_tests
+    case TestResult.Success() : 
+      res['got']+='Passato!\n'
+      res["fraction"] += 1 / num_tests
     case TestResult.StructureFail(reason) :
-      res["got"] += f"Test Fallito: {reason}\n"
-      
-    case TestResult.EvaluationFail(reason) :
-      res["got"] += f"Test Fallito: {reason}\n"
-      for line_num in range(test.get_num_inputs()):
-        res['got']+=chr(ord('A')+line_num)
-      
-      res["got"] += 'Out\n'
+      res["got"] += f"Fallito: {reason}\n"
 
+    case TestResult.EvaluationFail(reason) :
+      res["got"] += f"Fallito: {reason}\n"      
+      for line_num in range(test.get_num_inputs()):
+        res['got']+=chr(ord('A')+line_num) + '\t'
+      res["got"] += 'Out\n'
       for line_num,line in enumerate(logisim_output.splitlines()):
         if line_num >= 2**test.get_num_inputs(): #Trim output to prevent redundancy
           break
         vals = line.split('\t')
         for i,val in enumerate(vals):
           if i < test.get_num_inputs():
-            res["got"] += val+'\t'
-        
-        res["got"] += vals[CIRC_NUM_INPUTS+test_index] #Print just the output
-        res["got"] += '\n'
-
-      
-
+            res["got"] += val+'\t'    
+        res["got"] += vals[CIRC_NUM_INPUTS+test_index] + '\n' #Print just the output
 print(json.JSONEncoder().encode(res))
