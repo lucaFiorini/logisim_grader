@@ -130,7 +130,7 @@ def create_connected_tester_circuit(evaluated_circuit : 'ET.ElementTree[ET.Eleme
 
   test_circ_origin = insertion_wires[-1].get_end() 
   test_circ_origin.x += 3
-  test_circ_origin.y += (n_inputs-n_outputs) // 2
+  test_circ_origin.y += (n_inputs-n_outputs) // 2 + ((n_inputs-n_outputs) % 2)
     
   outputs : list[Output] = []
   #It follows that all subsequent outputs will start from the origin of the test circ
