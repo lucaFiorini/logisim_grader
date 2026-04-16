@@ -132,7 +132,9 @@ def create_connected_tester_circuit(evaluated_circuit : 'ET.ElementTree[ET.Eleme
   test_circ_origin.x += 3
   #This line is pure black magic, it does seem to work though
   test_circ_origin.y += (n_inputs-n_outputs) // 2 + ((n_inputs-n_outputs) % 2) if n_outputs > n_inputs else 0
-    
+  if n_inputs-n_outputs > 3:
+    test_circ_origin.y += (n_inputs-n_outputs) // 2
+  
   outputs : list[Output] = []
   #It follows that all subsequent outputs will start from the origin of the test circ
   for i in range(n_outputs):
